@@ -1,3 +1,5 @@
+import { env } from "@/env";
+import { getWebhooksRoute } from "@/routes/get-webhooks";
 import { fastifyCors } from "@fastify/cors";
 import { fastifySwagger } from "@fastify/swagger";
 import ScalarApiReference from "@scalar/fastify-api-reference";
@@ -35,7 +37,11 @@ app.register(ScalarApiReference, {
   routePrefix: "/docs",
 });
 
-app.listen({ port: 3333, host: "0.0.0.0" }).then(() => {
-  console.log("🔥 HTTP server running on http://localhost:3333");
-  console.log("📚 API documentation available at http://localhost:3333/docs");
+app.register(getWebhooksRoute);
+
+app.listen({ port: env.PORT, host: env.HOST }).then(() => {
+  console.log(`🔥 HTTP server running on http://${env.API_DOMAIN}:${env.PORT}`);
+  console.log(
+    `📚 API documentation available at http://${env.API_DOMAIN}:${env.PORT}/docs`
+  );
 });
