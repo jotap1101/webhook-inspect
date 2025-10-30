@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:latest
+    container_name: webhooks_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
