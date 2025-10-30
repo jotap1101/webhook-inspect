@@ -8,6 +8,7 @@ const envSchema = z.object({
   HOST: z.string().default("0.0.0.0"),
   API_DOMAIN: z.string().default("localhost"),
   API_ROUTE_PREFIX: z.string().default("/api/v1"),
+  DATABASE_URL: z.string().min(1),
 });
 
 export const env = envSchema.parse(process.env);
