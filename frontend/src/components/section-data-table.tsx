@@ -6,8 +6,8 @@ interface SectionDataTableProps extends ComponentProps<"div"> {
 }
 
 export function SectionDataTable({
-  className,
   data,
+  className,
   ...props
 }: SectionDataTableProps) {
   return (
