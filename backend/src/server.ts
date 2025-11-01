@@ -25,7 +25,7 @@ app.register(fastifyCors, {
 app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: "Webhook Inspector API",
+      title: "Webhook Inspect API",
       description: "API for capturing and inspecting webhook requests.",
       version: "1.0.0",
     },

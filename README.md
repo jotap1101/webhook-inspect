@@ -1,4 +1,4 @@
-# Webhook Inspector
+# Webhook Inspect
 
 Uma ferramenta completa para inspecionar, analisar e debugar webhooks em tempo real com uma interface interativa e intuitiva.
 
@@ -29,7 +29,7 @@ Uma ferramenta completa para inspecionar, analisar e debugar webhooks em tempo r
 
 ```bash
 git clone <repository-url>
-cd webhook-inspector
+cd webhook-inspect
 ```
 
 2. Instale as dependências:
@@ -50,7 +50,7 @@ docker-compose up -d
 
 ```env
 # Configurações da aplicação
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/webhook_inspector"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/webhook_inspect"
 NODE_ENV="development"
 PORT=3333
 HOST="0.0.0.0"
@@ -60,7 +60,7 @@ API_ROUTE_PREFIX="/api/v1"
 # Configurações do Docker PostgreSQL
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
-POSTGRES_DB=webhook_inspector
+POSTGRES_DB=webhook_inspect
 ```
 
 > **Nota:** As variáveis `POSTGRES_*` são utilizadas pelo Docker Compose para configurar o container do PostgreSQL. A `DATABASE_URL` deve corresponder às credenciais definidas nessas variáveis.
@@ -138,7 +138,7 @@ Com o backend rodando, acesse a documentação interativa da API em:
 ## 🏗️ Estrutura do projeto
 
 ```
-webhook-inspector/
+webhook-inspect/
 ├── backend/           # API Fastify + TypeScript
 │   ├── src/
 │   │   ├── server.ts  # Configuração do servidor

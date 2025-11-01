@@ -1,5 +1,5 @@
 {
-  "name": "webhook-inspector",
+  "name": "webhook-inspect",
   "version": "1.0.0",
   "description": "A complete tool to inspect, analyze, and debug webhooks in real time with an interactive and intuitive interface.",
   "license": "ISC",
