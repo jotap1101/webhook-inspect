@@ -3,7 +3,7 @@ import { webhookListSchema } from "../http/schemas/webhooks";
 import { WebhooksListItem } from "./webhooks-list-item";
 
 export function WebhooksList() {
-  const { isPending, error, data } = useSuspenseQuery({
+  const { data } = useSuspenseQuery({
     queryKey: ["webhooks"],
     queryFn: async () => {
       const response = await fetch(
