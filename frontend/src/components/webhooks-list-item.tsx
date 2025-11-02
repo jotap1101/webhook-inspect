@@ -65,7 +65,7 @@ export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
         </Link>
         <IconButton
           icon={<Trash2Icon className="size-3.5 text-zinc-400" />}
-          className="opacity-0 transition-opacity group-hover:opacity-100"
+          className="opacity-0 transition-opacity group-hover:opacity-100 hover:cursor-pointer"
           onClick={() => deleteWebhook(webhook.id)}
         />
       </div>
