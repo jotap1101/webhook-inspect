@@ -202,16 +202,20 @@ function generateStripeWebhookBody(event: string) {
     },
   };
 
-  return JSON.stringify({
-    ...baseData,
-    data: {
-      object: dataObjects[event] || {
-        id: faker.string.alphanumeric(24),
-        object: event.split(".")[0],
-        customer: customerId,
+  return JSON.stringify(
+    {
+      ...baseData,
+      data: {
+        object: dataObjects[event] || {
+          id: faker.string.alphanumeric(24),
+          object: event.split(".")[0],
+          customer: customerId,
+        },
       },
     },
-  });
+    null,
+    2
+  );
 }
 
 async function main() {
