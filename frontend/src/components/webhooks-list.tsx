@@ -1,26 +1,81 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { webhookListSchema } from "../http/schemas/webhooks";
 import { WebhooksListItem } from "./webhooks-list-item";
 
 export function WebhooksList() {
-  const { data } = useSuspenseQuery({
-    queryKey: ["webhooks"],
-    queryFn: async () => {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/webhooks`,
-      ).then((res) => res.json());
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver>(null);
 
-      return webhookListSchema.parse(response);
-    },
-  });
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useSuspenseInfiniteQuery({
+      queryKey: ["webhooks"],
+      queryFn: async ({ pageParam }) => {
+        const url = new URL(`${import.meta.env.VITE_BACKEND_URL}/webhooks`);
+
+        if (pageParam) {
+          url.searchParams.set("cursor", pageParam);
+        }
+
+        const response = await fetch(url).then((res) => res.json());
+
+        return webhookListSchema.parse(response);
+      },
+      getNextPageParam: (lastPage) => {
+        return lastPage.nextCursor ?? undefined;
+      },
+      initialPageParam: undefined as string | undefined,
+    });
+
+  const webhooks = data.pages.flatMap((page) => page.webhooks);
+
+  useEffect(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        threshold: 0.1,
+      },
+    );
+
+    if (loadMoreRef.current) {
+      observerRef.current.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="space-y-1 p-2">
-        {data.webhooks.map((webhook) => {
+        {webhooks.map((webhook) => {
           return <WebhooksListItem key={webhook.id} webhook={webhook} />;
         })}
       </div>
+
+      {hasNextPage && (
+        <div className="p-2" ref={loadMoreRef}>
+          {isFetchingNextPage && (
+            <div className="flex items-center justify-center py-2">
+              <Loader2 className="size-5 animate-spin text-zinc-500" />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
