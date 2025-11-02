@@ -1,23 +1,35 @@
 import { Link } from "@tanstack/react-router";
+import { formatDistanceToNow } from "date-fns";
 import { Trash2Icon } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 import { IconButton } from "./ui/icon-button";
 
-export function WebhooksListItem() {
+interface WebhooksListItemProps {
+  webhook: {
+    id: string;
+    method: string;
+    pathname: string;
+    createdAt: Date;
+  };
+}
+
+export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
   return (
     <div className="group rounded-lg transition-colors duration-150 hover:bg-zinc-700/30">
       <div className="flex items-start gap-3 px-4 py-2.5">
         <Checkbox />
         <Link to="/" className="flex min-w-0 flex-1 items-start gap-3">
           <span className="w-12 shrink-0 text-right font-mono text-xs font-semibold text-zinc-300">
-            POST
+            {webhook.method.toUpperCase()}
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate font-mono text-xs leading-tight text-zinc-200">
-              /video/status
+              {webhook.pathname}
             </p>
             <p className="mt-1 text-xs font-medium text-zinc-500">
-              1 minute ago
+              {formatDistanceToNow(new Date(webhook.createdAt), {
+                addSuffix: true,
+              })}
             </p>
           </div>
         </Link>
