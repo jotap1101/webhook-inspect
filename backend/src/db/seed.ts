@@ -29,6 +29,8 @@ const sampleBodies = [
 ];
 
 async function main() {
+  console.log("Seeding database...");
+
   await seed(db, { webhooks: webhooksTable }).refine((f) => ({
     webhooks: {
       count: 25,
@@ -62,6 +64,9 @@ async function main() {
       },
     },
   }));
+
+  console.log("Database seeded successfully.");
+  process.exit(0);
 }
 
 main().catch((e) => {
