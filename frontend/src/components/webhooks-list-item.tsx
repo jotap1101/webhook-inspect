@@ -18,7 +18,11 @@ export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
     <div className="group rounded-lg transition-colors duration-150 hover:bg-zinc-700/30">
       <div className="flex items-start gap-3 px-4 py-2.5">
         <Checkbox />
-        <Link to="/" className="flex min-w-0 flex-1 items-start gap-3">
+        <Link
+          to="/webhooks/$id"
+          params={{ id: webhook.id }}
+          className="flex min-w-0 flex-1 items-start gap-3"
+        >
           <span className="w-12 shrink-0 text-right font-mono text-xs font-semibold text-zinc-300">
             {webhook.method.toUpperCase()}
           </span>
