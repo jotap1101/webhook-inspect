@@ -12,11 +12,11 @@ const RootLayout = () => (
     <QueryClientProvider client={queryClient}>
       <div className="h-screen bg-zinc-900">
         <PanelGroup direction="horizontal">
-          <Panel defaultSize={25} minSize={20} maxSize={25}>
+          <Panel defaultSize={20} minSize={20} maxSize={25}>
             <Sidebar />
           </Panel>
           <PanelResizeHandle className="w-px bg-zinc-700 transition-colors duration-150 hover:bg-zinc-600" />
-          <Panel defaultSize={75} minSize={70} maxSize={80}>
+          <Panel defaultSize={80} minSize={75} maxSize={80}>
             <Outlet />
           </Panel>
         </PanelGroup>
