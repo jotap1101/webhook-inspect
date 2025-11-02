@@ -15,7 +15,7 @@ export const getWebhooksRoute: FastifyPluginAsyncZod = async (app) => {
         description: "Retrieve a list of captured webhooks.",
         tags: ["Webhooks"],
         querystring: z.object({
-          limit: z.coerce.number().min(1).max(100).default(10),
+          limit: z.coerce.number().min(1).max(100).default(15),
           cursor: z.string().optional(),
         }),
         response: {
