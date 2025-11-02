@@ -251,31 +251,35 @@ async function main() {
     // Ajusta o corpo da resposta para status codes de erro
     const errorBody =
       statusCode >= 400
-        ? JSON.stringify({
-            error: {
-              type: "invalid_request_error",
-              message: (() => {
-                switch (statusCode) {
-                  case 400:
-                    return "Invalid payload received";
-                  case 401:
-                    return "Invalid API key provided";
-                  case 403:
-                    return "Invalid webhook signature";
-                  case 404:
-                    return "Webhook endpoint not found";
-                  case 429:
-                    return "Too many webhook attempts";
-                  case 500:
-                    return "Internal server error";
-                  default:
-                    return "Unknown error";
-                }
-              })(),
-              code: statusCode,
-              request_id: `req_${faker.string.alphanumeric(24)}`,
+        ? JSON.stringify(
+            {
+              error: {
+                type: "invalid_request_error",
+                message: (() => {
+                  switch (statusCode) {
+                    case 400:
+                      return "Invalid payload received";
+                    case 401:
+                      return "Invalid API key provided";
+                    case 403:
+                      return "Invalid webhook signature";
+                    case 404:
+                      return "Webhook endpoint not found";
+                    case 429:
+                      return "Too many webhook attempts";
+                    case 500:
+                      return "Internal server error";
+                    default:
+                      return "Unknown error";
+                  }
+                })(),
+                code: statusCode,
+                request_id: `req_${faker.string.alphanumeric(24)}`,
+              },
             },
-          })
+            null,
+            2
+          )
         : body;
 
     return {
