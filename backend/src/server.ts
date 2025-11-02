@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { getWebhookRoute } from "@/routes/get-webhook";
 import { getWebhooksRoute } from "@/routes/get-webhooks";
 import { fastifyCors } from "@fastify/cors";
 import { fastifySwagger } from "@fastify/swagger";
@@ -38,6 +39,7 @@ app.register(ScalarApiReference, {
 });
 
 app.register(getWebhooksRoute);
+app.register(getWebhookRoute);
 
 app.listen({ port: env.PORT, host: env.HOST }).then(() => {
   console.log(`🔥 HTTP server running on http://${env.API_DOMAIN}:${env.PORT}`);
