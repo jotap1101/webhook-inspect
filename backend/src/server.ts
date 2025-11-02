@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { deleteWebhookRoute } from "@/routes/delete-webhook";
 import { getWebhookRoute } from "@/routes/get-webhook";
-import { getWebhooksRoute } from "@/routes/get-webhooks";
+import { getWebhooksRoute } from "@/routes/list-webhooks";
 import { fastifyCors } from "@fastify/cors";
 import { fastifySwagger } from "@fastify/swagger";
 import ScalarApiReference from "@scalar/fastify-api-reference";

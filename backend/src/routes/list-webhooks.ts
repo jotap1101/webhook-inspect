@@ -11,7 +11,7 @@ export const getWebhooksRoute: FastifyPluginAsyncZod = async (app) => {
     `${env.API_ROUTE_PREFIX}/webhooks`,
     {
       schema: {
-        summary: "Get Webhooks",
+        summary: "List Webhooks",
         description: "Retrieve a list of captured webhooks.",
         tags: ["Webhooks"],
         querystring: z.object({
