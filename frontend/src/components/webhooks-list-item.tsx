@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { Trash2Icon } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
@@ -16,6 +16,7 @@ interface WebhooksListItemProps {
 
 export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { mutate: deleteWebhook } = useMutation({
     mutationFn: async (id: string) => {
@@ -27,6 +28,8 @@ export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
       queryClient.invalidateQueries({
         queryKey: ["webhooks"],
       });
+
+      router.navigate({ to: "/" });
     },
   });
 
