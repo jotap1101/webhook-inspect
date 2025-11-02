@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { captureWebhook } from "@/routes/capture-webhook";
 import { deleteWebhookRoute } from "@/routes/delete-webhook";
 import { getWebhookRoute } from "@/routes/get-webhook";
 import { getWebhooksRoute } from "@/routes/list-webhooks";
@@ -42,6 +43,7 @@ app.register(ScalarApiReference, {
 app.register(getWebhooksRoute);
 app.register(getWebhookRoute);
 app.register(deleteWebhookRoute);
+app.register(captureWebhook);
 
 app.listen({ port: env.PORT, host: env.HOST }).then(() => {
   console.log(`🔥 HTTP server running on http://${env.API_DOMAIN}:${env.PORT}`);
