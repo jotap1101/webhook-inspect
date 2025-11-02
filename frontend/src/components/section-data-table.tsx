@@ -19,16 +19,18 @@ export function SectionDataTable({
       {...props}
     >
       <table className="w-full">
-        {data.map(({ key, value }) => (
-          <tr key={key} className="border-b border-zinc-700 last:border-0">
-            <td className="w-1/2 truncate border-r border-zinc-700 bg-zinc-800/50 p-3 text-sm font-medium text-zinc-400">
-              {key}
-            </td>
-            <td className="w-1/2 truncate p-3 font-mono text-sm text-zinc-300">
-              {value}
-            </td>
-          </tr>
-        ))}
+        <tbody>
+          {data.map(({ key, value }) => (
+            <tr key={key} className="border-b border-zinc-700 last:border-0">
+              <td className="w-1/2 truncate border-r border-zinc-700 bg-zinc-800/50 p-3 text-sm font-medium text-zinc-400">
+                {key}
+              </td>
+              <td className="w-1/2 truncate p-3 font-mono text-sm text-zinc-300">
+                {value}
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   );
