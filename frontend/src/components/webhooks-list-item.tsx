@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useMatches, useRouter } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { Trash2Icon } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
@@ -17,6 +17,7 @@ interface WebhooksListItemProps {
 export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const matches = useMatches();
 
   const { mutate: deleteWebhook } = useMutation({
     mutationFn: async (id: string) => {
@@ -34,7 +35,13 @@ export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
   });
 
   return (
-    <div className="group rounded-lg transition-colors duration-150 hover:bg-zinc-700/30">
+    <div
+      className="group rounded-lg transition-colors duration-150 hover:bg-zinc-700/30 data-[active=true]:bg-zinc-700/50"
+      data-active={matches.some(
+        (match) =>
+          match.routeId === "/webhooks/$id" && match.params.id === webhook.id,
+      )}
+    >
       <div className="flex items-start gap-3 px-4 py-2.5">
         <Checkbox />
         <Link
