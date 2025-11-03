@@ -9,6 +9,7 @@ const envSchema = z.object({
   API_DOMAIN: z.string().default("localhost"),
   API_ROUTE_PREFIX: z.string().default("/api/v1"),
   DATABASE_URL: z.string().min(1),
+  GEMINI_API_KEY: z.string().min(1),
 });
 
 export const env = envSchema.parse(process.env);
