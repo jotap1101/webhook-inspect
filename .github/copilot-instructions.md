@@ -1,78 +1,224 @@
-## Quick orientation
+## Orientação rápida
 
-This repository is a small monorepo (root `package.json` workspaces) with two packages:
+Esta é uma ferramenta completa de inspeção de webhooks full-stack construída como um monorepo (workspaces do `package.json` raiz) com dois pacotes:
 
-- `backend/` — Fastify + TypeScript server that captures and exposes webhooks.
-- `frontend/` — Vite + React UI.
+- `backend/` — Servidor Fastify + TypeScript que captura, armazena e expõe webhooks com geração de handlers alimentada por IA.
+- `frontend/` — Interface Vite + React com componentes modernos e inspeção de webhooks em tempo real.
 
-Focus areas for contributions or code-generation:
+**Status do Projeto:** ✅ CONCLUÍDO
+
+Principais funcionalidades implementadas:
+
+- Captura e armazenamento de webhooks em tempo real
+- Lista interativa de webhooks com scroll infinito e paginação
+- Inspeção detalhada de webhooks (headers, body, query params, método, IP, etc.)
+- Funcionalidade de exclusão de webhooks
+- Geração de código TypeScript de handlers alimentada por IA usando Google Gemini
+- Interface moderna com tema escuro, syntax highlighting e design responsivo
+- Documentação completa da API com Swagger/Scalar
+
+Áreas de foco para contribuições ou geração de código:
 
 - backend: `backend/src/server.ts`, `backend/src/routes/*`, `backend/src/db/*`, `backend/src/env.ts`
-- frontend: `frontend/src/` and `frontend/README.md`
+- frontend: `frontend/src/components/*`, `frontend/src/routes/*`, `frontend/src/http/*`
 
-## Architecture summary (what you should know)
+## Resumo da arquitetura (o que você deve saber)
 
-- Monorepo using npm workspaces. Work on a package by running npm workspace commands (examples below).
-- Backend: Fastify with `fastify-type-provider-zod` (Zod-driven request/response schemas). Routes are implemented as Fastify plugins (see `get-webhooks.ts`).
-- DB: Drizzle ORM (Postgres). Table schemas live in `backend/src/db/schema/*.ts`. The connection is created in `backend/src/db/index.ts` using `env.DATABASE_URL`.
-- Env: `backend/src/env.ts` validates environment variables with Zod — missing/invalid env will throw on start (DATABASE_URL is required).
-- API docs: fastify-swagger + ScalarApiReference registered; docs exposed under `/docs`.
+**Arquitetura completa da aplicação full-stack:**
 
-## Developer workflows & commands (reproducible)
+- **Monorepo**: Configuração de workspaces npm com dependências compartilhadas e desenvolvimento coordenado
+- **Backend**: Fastify com `fastify-type-provider-zod` para desenvolvimento de API type-safe
+  - Rotas implementadas como plugins Fastify com schemas Zod abrangentes
+  - Todas as operações CRUD: Create (capturar), Read (listar/obter), Delete webhooks
+  - Integração de IA com Google Gemini para geração de handlers TypeScript
+- **Banco de dados**: PostgreSQL com Drizzle ORM
+  - Abordagem schema-first com migrações
+  - Armazenamento JSONB para dados flexíveis de webhook (headers, query params)
+  - Chaves primárias UUIDv7 para melhor performance
+- **Frontend**: React moderno com TypeScript
+  - TanStack Router para roteamento type-safe
+  - TanStack Query para gerenciamento de estado do servidor
+  - Tailwind CSS com sistema de design de tema escuro customizado
+  - Componentes Radix UI para acessibilidade
+  - Syntax highlighting com Shiki
+- **Ambiente**: Variáveis de ambiente validadas com Zod com mensagens de erro claras
+- **Documentação da API**: Gerada automaticamente com Fastify Swagger + Scalar UI
+- **Desenvolvimento**: Configuração completa do Docker para PostgreSQL, hot reload e scripts abrangentes
 
-Use npm workspaces from the repository root. Examples:
+**Principais funcionalidades técnicas:**
 
-- install dependencies:
-  npm install
+- Scroll infinito com paginação baseada em cursor
+- Captura de webhooks em tempo real com extração abrangente de metadados
+- Geração de código alimentada por IA usando prompts estruturados
+- Design responsivo com painéis redimensionáveis
+- Tratamento de erros e estados de carregamento em toda a aplicação
+- Type safety de ponta a ponta (TypeScript + Zod)
 
-- start backend in dev (uses `tsx watch` and reads `.env`):
-  npm --workspace backend run dev
+## Fluxos de trabalho e comandos do desenvolvedor (reproduzíveis)
 
-- run drizzle commands (from root via workspace):
-  npm --workspace backend run db:generate # generate migration files
-  npm --workspace backend run db:migrate # apply migrations
-  npm --workspace backend run db:push # push schema (drizzle-kit)
-  npm --workspace backend run db:studio # open drizzle studio
+**Configuração completa de desenvolvimento a partir da raiz do repositório:**
 
-- start frontend dev server:
-  npm --workspace frontend run dev
+**Configuração Inicial:**
 
-Notes:
+```bash
+# Instalar todas as dependências
+npm install
 
-- Backend `dev` script: "tsx watch --env-file=.env src/server.ts" — ensure `.env` contains required vars (see `backend/src/env.ts`).
+# Iniciar banco de dados PostgreSQL
+cd backend && docker-compose up -d && cd ..
 
-## Project-specific conventions and examples
+# Configurar variáveis de ambiente (copiar .env.example para .env em backend/)
+# Obrigatórias: DATABASE_URL, GOOGLE_GENERATIVE_AI_API_KEY
 
-- Path alias: code uses `@/` imports. See `backend/tsconfig.json` -> `paths` maps `@/*` to `./src/*`. Use the same alias when adding files.
-- Route pattern: Each route exports a plugin typed as `FastifyPluginAsyncZod` and registers paths using `env.API_ROUTE_PREFIX`. Example: `app.get(`${env.API_ROUTE_PREFIX}/webhooks`, { schema: { ...zod schemas... }}, handler)` (`backend/src/routes/get-webhooks.ts`).
-- Zod-first routes: request query/body/response shapes are defined with Zod in the route `schema` object; keep response shapes narrow and consistent with DB types.
-- DB schema: Add or change tables under `backend/src/db/schema/*.ts`. The `webhooks` table stores headers/query as JSONB and body as text (see `webhooks.ts`). After editing schema, run `db:generate`/`db:migrate`.
+# Executar migrações do banco de dados
+npm --workspace backend run db:migrate
 
-## Integration & error modes to watch for
+# Opcional: Popular banco de dados com dados de exemplo
+npm --workspace backend run db:seed
+```
 
-- Missing env: `backend/src/env.ts` uses `z.parse(process.env)` — server will crash at startup if required envs (like DATABASE_URL) are absent.
-- DB connectivity: DB client created using `drizzle(env.DATABASE_URL)`; migrations and runtime both rely on that URL.
-- Schema vs runtime: Some route handlers currently use placeholders (e.g., `get-webhooks.ts` returns generated objects). When hooking to DB, follow existing query/response shapes.
+**Comandos de Desenvolvimento:**
 
-## Files to inspect for context when making changes
+```bash
+# Iniciar servidor backend (http://localhost:3333)
+npm --workspace backend run dev
 
-- backend/src/server.ts — app bootstrap, CORS, Swagger/docs registration
-- backend/src/routes/get-webhooks.ts — canonical route example (Zod + Fastify plugin)
-- backend/src/db/schema/webhooks.ts — schema design and types
-- backend/src/db/index.ts — how Drizzle is initialized
-- backend/src/env.ts — required env keys and defaults
-- backend/package.json — dev scripts, drizzle-kit usage
-- frontend/README.md and `frontend/package.json` — frontend dev/build commands
+# Iniciar servidor de desenvolvimento frontend (http://localhost:5173)
+npm --workspace frontend run dev
 
-## If you are generating code for the backend
+# Operações do banco de dados
+npm --workspace backend run db:generate    # gerar arquivos de migração
+npm --workspace backend run db:migrate     # aplicar migrações
+npm --workspace backend run db:push        # push do schema (desenvolvimento)
+npm --workspace backend run db:studio      # abrir Drizzle Studio
+npm --workspace backend run db:seed        # popular com dados de exemplo
+npm --workspace backend run db:reset       # resetar banco de dados
 
-- Use `@/` imports and Zod for all request/response schemas.
-- Register routes as plugins and use `env.API_ROUTE_PREFIX` to build URLs.
-- Validate that new DB fields are reflected in schema files and add migrations using the drizzle-kit scripts.
+# Operações do frontend
+npm --workspace frontend run build         # build de produção
+npm --workspace frontend run preview       # preview do build de produção
+npm --workspace frontend run lint          # lint do código
+```
 
-## After making changes
+**Pronto para Produção:**
 
-- Run the appropriate workspace script from repo root (see commands above).
-- Ensure `.env` is present when starting the backend dev server.
+- Backend usa `tsx watch` com carregamento automático de `.env`
+- Frontend inclui configuração otimizada do build Vite
+- Migrações do banco de dados são versionadas e automatizadas
+- Validação de ambiente previne erros de runtime
+- Documentação da API auto-gerada e sempre atualizada
 
-If any of this is unclear or you'd like more examples (e.g., a sample `.env`, or a new CRUD route scaffold), tell me which area to expand and I will iterate.
+## Convenções específicas do projeto e exemplos
+
+**Padrões do Backend:**
+
+- **Aliases de caminho**: Imports `@/` mapeados para `./src/*` em `backend/tsconfig.json`
+- **Estrutura de rotas**: Cada rota exporta plugin `FastifyPluginAsyncZod`, usa `env.API_ROUTE_PREFIX`
+- **Exemplo**: `app.get(\`\${env.API_ROUTE_PREFIX}/webhooks\`, { schema: { ...zod schemas... }}, handler)`
+- **API Zod-first**: Todas as formas de request/response definidas com Zod para type safety
+- **Banco de dados**: Chaves primárias UUIDv7, JSONB para dados flexíveis, casing snake_case
+
+**Padrões do Frontend:**
+
+- **Roteamento**: TanStack Router com definições de rota type-safe
+- **Estado**: TanStack Query para estado do servidor, React state para UI
+- **Estilização**: Tailwind CSS com paleta de tema escuro customizada (baseada em zinc)
+- **Componentes**: Primitivos Radix UI com estilização customizada
+- **Highlighting de código**: Shiki para syntax highlighting na exibição do body do webhook
+
+**Organização de Arquivos:**
+
+```
+backend/src/
+├── routes/          # Endpoints da API (capture-webhook, list-webhooks, get-webhook, delete-webhook, generate-handler)
+├── db/schema/       # Definições de schema Drizzle
+├── db/migrations/   # Arquivos de migração auto-gerados
+├── env.ts          # Validação de ambiente com Zod
+└── server.ts       # Bootstrap da aplicação Fastify
+
+frontend/src/
+├── components/     # Componentes React reutilizáveis
+├── routes/         # Componentes de rota TanStack Router
+├── http/schemas/   # Schemas Zod do frontend (correspondentes ao backend)
+└── main.tsx        # Ponto de entrada da aplicação React
+```
+
+**Principais Rotas Implementadas:**
+
+- `GET /api/v1/webhooks` - Listar webhooks com paginação baseada em cursor
+- `GET /api/v1/webhooks/:id` - Obter informações detalhadas do webhook
+- `DELETE /api/v1/webhooks/:id` - Deletar webhook
+- `ALL /capture/*` - Capturar webhooks recebidos (todos os métodos HTTP)
+- `POST /api/v1/handler/generate` - Geração de código de handler alimentada por IA
+- `GET /docs` - Documentação interativa da API
+
+## Modos de integração e erro para observar
+
+**Variáveis de Ambiente:**
+
+- Backend trava na inicialização se envs obrigatórias estiverem ausentes (validado por `backend/src/env.ts`)
+- Obrigatórias: `DATABASE_URL`, `GOOGLE_GENERATIVE_AI_API_KEY`
+- Opcionais com padrões: `PORT`, `HOST`, `API_DOMAIN`, `API_ROUTE_PREFIX`, `NODE_ENV`
+
+**Conectividade do Banco de Dados:**
+
+- Cliente DB usa `drizzle(env.DATABASE_URL)` de `backend/src/db/index.ts`
+- Migrações e runtime dependem de conexão PostgreSQL válida
+- Docker Compose fornece instância PostgreSQL local
+
+**Integração Frontend-Backend:**
+
+- Frontend espera backend na variável de ambiente `VITE_BACKEND_URL`
+- Schemas da API compartilhados via definições Zod em `frontend/src/http/schemas/`
+- Atualizações em tempo real via refetch automático do TanStack Query
+
+**Integração com IA:**
+
+- API Google Gemini usada para geração de handlers TypeScript
+- Requer `GOOGLE_GENERATIVE_AI_API_KEY` válida no ambiente backend
+- Tratamento de erro gracioso se serviço de IA indisponível
+
+## Arquivos para inspecionar para contexto ao fazer alterações
+
+**Arquivos Principais da Aplicação:**
+
+- `backend/src/server.ts` — Bootstrap da aplicação Fastify, CORS, registro Swagger/docs, registro de rotas
+- `backend/src/env.ts` — Validação de variáveis de ambiente e definições de tipos
+- `backend/src/db/index.ts` — Conexão e configuração do banco de dados Drizzle
+- `backend/src/db/schema/webhooks.ts` — Schema completo da tabela webhook com todos os campos
+
+**Exemplos de Rotas do Backend:**
+
+- `backend/src/routes/list-webhooks.ts` — Implementação de paginação baseada em cursor
+- `backend/src/routes/get-webhook.ts` — Recuperação individual de webhook com detalhes completos
+- `backend/src/routes/delete-webhook.ts` — Exclusão de webhook com tratamento de erro
+- `backend/src/routes/capture-webhook.ts` — Captura universal de webhook (todos os métodos HTTP)
+- `backend/src/routes/generate-handler.ts` — Geração de código TypeScript alimentada por IA
+
+**Arquitetura do Frontend:**
+
+- `frontend/src/routes/__root.tsx` — Layout da aplicação com painéis e providers
+- `frontend/src/components/webhooks-list.tsx` — Implementação de scroll infinito com integração de IA
+- `frontend/src/components/webhook-details.tsx` — Interface de inspeção detalhada de webhook
+- `frontend/src/components/sidebar.tsx` — Navegação principal e container da lista de webhooks
+- `frontend/src/http/schemas/webhooks.ts` — Schemas da API frontend correspondentes ao backend
+
+**Configuração & Setup:**
+
+- `backend/package.json` — Todos os scripts npm disponíveis e dependências
+- `frontend/package.json` — Configuração de build frontend e dependências
+- `backend/drizzle.config.ts` — Configuração de migração e schema do banco de dados
+- `backend/docker-compose.yml` — Setup do banco de dados PostgreSQL de desenvolvimento
+
+## Se você estiver gerando código para o backend
+
+- Use imports `@/` e Zod para todos os schemas de request/response.
+- Registre rotas como plugins e use `env.API_ROUTE_PREFIX` para construir URLs.
+- Valide que novos campos do BD estão refletidos nos arquivos de schema e adicione migrações usando os scripts drizzle-kit.
+
+## Depois de fazer alterações
+
+- Execute o script workspace apropriado da raiz do repositório (veja comandos acima).
+- Certifique-se de que `.env` está presente ao iniciar o servidor backend em dev.
+
+Se algo não estiver claro ou você quiser mais exemplos (ex.: um `.env` de exemplo, ou um scaffold de nova rota CRUD), me diga qual área expandir e eu iterarei.
