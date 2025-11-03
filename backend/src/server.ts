@@ -14,8 +14,9 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
+import { healthyRoute } from "./routes/healthy";
 
-const app = fastify().withTypeProvider<ZodTypeProvider>();
+export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
@@ -41,6 +42,7 @@ app.register(ScalarApiReference, {
   routePrefix: "/docs",
 });
 
+app.register(healthyRoute);
 app.register(getWebhooksRoute);
 app.register(getWebhookRoute);
 app.register(deleteWebhookRoute);
