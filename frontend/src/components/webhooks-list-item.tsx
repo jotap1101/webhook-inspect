@@ -12,9 +12,15 @@ interface WebhooksListItemProps {
     pathname: string;
     createdAt: Date;
   };
+  onWebhookChecked: (webhookId: string) => void;
+  isWebhookChecked: boolean;
 }
 
-export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
+export function WebhooksListItem({
+  webhook,
+  onWebhookChecked,
+  isWebhookChecked,
+}: WebhooksListItemProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const matches = useMatches();
@@ -43,7 +49,10 @@ export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
       )}
     >
       <div className="flex items-start gap-3 px-4 py-2.5">
-        <Checkbox />
+        <Checkbox
+          onCheckedChange={() => onWebhookChecked(webhook.id)}
+          checked={isWebhookChecked}
+        />
         <Link
           to="/webhooks/$id"
           params={{ id: webhook.id }}
@@ -57,7 +66,7 @@ export function WebhooksListItem({ webhook }: WebhooksListItemProps) {
               {webhook.pathname}
             </p>
             <p className="mt-1 text-xs font-medium text-zinc-500">
-              {formatDistanceToNow(new Date(webhook.createdAt), {
+              {formatDistanceToNow(webhook.createdAt, {
                 addSuffix: true,
               })}
             </p>
