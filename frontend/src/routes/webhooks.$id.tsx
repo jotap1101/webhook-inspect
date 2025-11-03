@@ -10,7 +10,13 @@ function RouteComponent() {
   const { id } = Route.useParams();
 
   return (
-    <Suspense fallback={<p>Loading...</p>}>
+    <Suspense
+      fallback={
+        <div className="flex h-full items-center justify-center pt-5">
+          Loading...
+        </div>
+      }
+    >
       <WebhookDetails id={id} />
     </Suspense>
   );

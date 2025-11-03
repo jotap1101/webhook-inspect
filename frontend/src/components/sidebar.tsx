@@ -18,7 +18,13 @@ export function Sidebar() {
         </div>
         <IconButton icon={<CopyIcon className="size-4" />} size="sm" />
       </div>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex h-full items-start justify-center pt-5">
+            Loading...
+          </div>
+        }
+      >
         <WebhooksList />
       </Suspense>
     </div>
